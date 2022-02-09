@@ -1,24 +1,39 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useQuery } from 'react-query';
+import { counterFetcher } from './utils/fetcher';
 
 function App() {
+  const {
+    data: counterValue,
+    isFetching,
+    isLoading,
+    refetch,
+  } = useQuery('counter', counterFetcher, {
+    enabled: false,
+    initialData: 0,
+    refetchOnWindowFocus: false,
+    onSuccess: () => {
+      console.log('success');
+    },
+  });
+
+  const clickRefetchButton = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    refetch();
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <>{counterValue}</>
+
+      <p>
+        {isFetching && <>fetching...</>}
+        <br />
+        {isLoading && <>loading...</>}
+      </p>
+
+      <button onClick={clickRefetchButton}>Refetch</button>
     </div>
   );
 }
